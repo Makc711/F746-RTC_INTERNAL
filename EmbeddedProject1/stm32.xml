@@ -49,11 +49,31 @@
     <AllDependencies>
       <ProjectDependency>
         <RelativePath>..\.cproject</RelativePath>
-        <Timestamp>133597445822070696</Timestamp>
+        <Timestamp>133600182259610923</Timestamp>
       </ProjectDependency>
     </AllDependencies>
     <RootDirectory>
       <Subdirectories>
+        <VirtualDirectorySnapshot>
+          <Name>app</Name>
+          <Files>
+            <VirtualFileSnapshot>
+              <RelativePath>..\app\rtc_internal.cpp</RelativePath>
+            </VirtualFileSnapshot>
+            <VirtualFileSnapshot>
+              <RelativePath>..\app\rtc_internal.h</RelativePath>
+            </VirtualFileSnapshot>
+            <VirtualFileSnapshot>
+              <RelativePath>..\app\static_string.h</RelativePath>
+            </VirtualFileSnapshot>
+            <VirtualFileSnapshot>
+              <RelativePath>..\app\uart_stream.c</RelativePath>
+            </VirtualFileSnapshot>
+            <VirtualFileSnapshot>
+              <RelativePath>..\app\uart_stream.h</RelativePath>
+            </VirtualFileSnapshot>
+          </Files>
+        </VirtualDirectorySnapshot>
         <VirtualDirectorySnapshot>
           <Name>Core</Name>
           <Subdirectories>
@@ -84,7 +104,7 @@
               <Name>Src</Name>
               <Files>
                 <VirtualFileSnapshot>
-                  <RelativePath>..\Core\Src\main.c</RelativePath>
+                  <RelativePath>..\Core\Src\main.cpp</RelativePath>
                 </VirtualFileSnapshot>
                 <VirtualFileSnapshot>
                   <RelativePath>..\Core\Src\stm32f7xx_hal_msp.c</RelativePath>
@@ -526,6 +546,7 @@
             <string>..\Drivers\STM32F7xx_HAL_Driver\Inc\Legacy</string>
             <string>..\Drivers\CMSIS\Device\ST\STM32F7xx\Include</string>
             <string>..\Drivers\CMSIS\Include</string>
+            <string>..\app</string>
           </IncludeDirectories>
           <PreprocessorMacros>
             <string>USE_HAL_DRIVER</string>
