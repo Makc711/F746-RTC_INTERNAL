@@ -72,7 +72,7 @@ void rtc_internal::uart_rx_cplt_callback(UART_HandleTypeDef* huart)
   {
     if (rtc.f_rx_buf[rtc.f_rx_buf_index] != '\r')
     {
-      rtc.f_rx_buf_index = rtc.f_rx_buf_index + 1;
+      ++rtc.f_rx_buf_index;
 
       if (rtc.f_rx_buf_index >= rx_buf_size)
       {
