@@ -112,9 +112,9 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
+  while (true)
   {
-    rtc_instance.parse_received_msg();
+    rtc_internal::execute_cmd(rtc_instance.parse_received_msg());
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

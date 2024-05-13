@@ -66,57 +66,62 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 
 void rtc_internal::uart_rx_cplt_callback(UART_HandleTypeDef* huart)
 {
-  rtc_internal& instance = get_instance();
+  rtc_internal& rtc = get_instance();
 
-  if (huart == &instance.f_huart)
+  if (huart == &rtc.f_huart)
   {
-    if (instance.f_rx_buf[instance.f_rx_buf_index] != '\r')
+    if (rtc.f_rx_buf[rtc.f_rx_buf_index] != '\r')
     {
-      instance.f_rx_buf_index = instance.f_rx_buf_index + 1;
+      rtc.f_rx_buf_index = rtc.f_rx_buf_index + 1;
 
-      if (instance.f_rx_buf_index >= rx_buf_size)
+      if (rtc.f_rx_buf_index >= rx_buf_size)
       {
         printf("Error: Msg size exceeded!\r");
-        instance.restart_msg_reception();
+        rtc.restart_msg_reception();
         return;
       }
     }
     else
     {
-      if (instance.f_rx_msg[0] != '\0') // If msg hasn't been parsed to this point.
+      if (rtc.f_rx_msg[0] != '\0') // If msg hasn't been parsed to this point.
       {
-        instance.parse_received_msg(); // Start the parser forced!
+        execute_cmd(rtc.parse_received_msg()); // Start the parser forced!
       }
 
-      std::copy_n(reinterpret_cast<char*>(instance.f_rx_buf), instance.f_rx_buf_index, instance.f_rx_msg);
-      instance.f_rx_msg[instance.f_rx_buf_index] = '\0';
-      instance.f_rx_buf_index = 0;
+      std::copy_n(reinterpret_cast<char*>(rtc.f_rx_buf), rtc.f_rx_buf_index, rtc.f_rx_msg);
+      rtc.f_rx_msg[rtc.f_rx_buf_index] = '\0';
+      rtc.f_rx_buf_index = 0;
     }
 
-    HAL_UART_Receive_IT(huart, &instance.f_rx_buf[instance.f_rx_buf_index], 1);
+    HAL_UART_Receive_IT(huart, &rtc.f_rx_buf[rtc.f_rx_buf_index], 1);
   }
 }
 
 /**
-  * @brief  Must be called in the main loop to parse received msg.
+  * @brief  This function must be called in the main loop to parse received msg.
+  * @note   This function parses msg received by UART into rtc_cmd and time/data str.
+  * @retval The command of rtc_cmd and pointer to string of format hh:mm:ss or dd/mm/yyyy
+  *         with result of time/data (ptr to a location in the f_rx_msg).
   */
-void rtc_internal::parse_received_msg()
+rtc_internal::cmd_info rtc_internal::parse_received_msg()
 {
+  cmd_info result = { rtc_cmd::NONE, "" };
+
   if (f_rx_msg[0] != '\0')
   {
     if (std::strncmp(f_rx_msg, cmd_set_t.c_str(), cmd_set_t.length()) == 0)
     {
-      set_time(f_rx_msg + cmd_set_t.length());
+      result = { rtc_cmd::SET_T, f_rx_msg + cmd_set_t.length() };
     }
     else if (std::strncmp(f_rx_msg, cmd_set_d.c_str(), cmd_set_d.length()) == 0)
     {
-      set_date(f_rx_msg + cmd_set_d.length());
+      result = { rtc_cmd::SET_D, f_rx_msg + cmd_set_d.length() };
     }
     else if (std::strncmp(f_rx_msg, cmd_get.c_str(), cmd_get.length()) == 0)
     {
       if (f_rx_msg[cmd_get.length()] == '\0')
       {
-        print_time();
+        result.cmd = rtc_cmd::GET;
       }
       else
       {
@@ -127,8 +132,28 @@ void rtc_internal::parse_received_msg()
     {
       printf("Error: Wrong command!\r");
     }
-    
+
     f_rx_msg[0] = '\0';
+  }
+
+  return result;
+}
+
+void rtc_internal::execute_cmd(const cmd_info& data)
+{
+  switch (data.cmd)
+  {
+    case rtc_cmd::SET_T:
+      set_time(data.res_str);
+      break;
+    case rtc_cmd::SET_D:
+      set_date(data.res_str);
+      break;
+    case rtc_cmd::GET:
+      print_time();
+      break;
+    case rtc_cmd::NONE:
+      break;
   }
 }
 

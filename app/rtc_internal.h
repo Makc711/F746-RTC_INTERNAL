@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file           : rtc_internal.h
   * @author         : Rusanov M.N.
-  * @version        : V1.0.0
+  * @version        : V1.0.1
   * @date           : 13-May-2024
   * @brief          : Header for rtc_internal.cpp file.
   *                   This file contains functions for working with RTC STM32
@@ -21,10 +21,25 @@ extern UART_HandleTypeDef huart1;
 class rtc_internal final
 {
 public:
+  enum class rtc_cmd
+  {
+    SET_T,
+    SET_D,
+    GET,
+    NONE
+  };
+
+  struct cmd_info
+  {
+    rtc_cmd cmd;
+    const char* res_str;
+  };
+
   static rtc_internal& get_instance();
   void check_time_out_reception();
   static void uart_rx_cplt_callback(UART_HandleTypeDef* huart);
-  void parse_received_msg();
+  cmd_info parse_received_msg();
+  static void execute_cmd(const cmd_info& data);
   static void set_time(const char* str);
   static void set_date(const char* str);
   static void print_time();
