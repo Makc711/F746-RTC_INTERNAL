@@ -43,16 +43,16 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CPPLanguageStandard>CPP1Z</CPPLanguageStandard>
-      <AdditionalIncludeDirectories>..\Core\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc\Legacy;..\Drivers\CMSIS\Device\ST\STM32F7xx\Include;..\Drivers\CMSIS\Include;..\app;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Core\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc\Legacy;..\Drivers\CMSIS\Device\ST\STM32F7xx\Include;..\Drivers\CMSIS\Include;..\app;..\app\xprintf;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG=1;USE_HAL_DRIVER;STM32F746xx;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions />
       <CLanguageStandard />
       <Optimization>O0</Optimization>
     </ClCompile>
     <Link>
-      <LibrarySearchDirectories>%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
-      <AdditionalLibraryNames>%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
-      <AdditionalLinkerInputs>%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
+      <LibrarySearchDirectories>;%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
+      <AdditionalLibraryNames>;%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
+      <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
       <LinkerScript>F:\_STM32_PROJECTS\F746\F746-RTC_INTERNAL\STM32F746NGHX_FLASH.ld</LinkerScript>
       <AdditionalOptions />
     </Link>
@@ -60,16 +60,16 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CPPLanguageStandard>CPP1Z</CPPLanguageStandard>
-      <AdditionalIncludeDirectories>..\Core\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc\Legacy;..\Drivers\CMSIS\Device\ST\STM32F7xx\Include;..\Drivers\CMSIS\Include;..\app;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Core\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc\Legacy;..\Drivers\CMSIS\Device\ST\STM32F7xx\Include;..\Drivers\CMSIS\Include;..\app;..\app\xprintf;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG=1;RELEASE=1;USE_HAL_DRIVER;STM32F746xx;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions />
       <CLanguageStandard />
       <Optimization>O3</Optimization>
     </ClCompile>
     <Link>
-      <LibrarySearchDirectories>%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
-      <AdditionalLibraryNames>%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
-      <AdditionalLinkerInputs>%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
+      <LibrarySearchDirectories>;%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
+      <AdditionalLibraryNames>;%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
+      <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
       <LinkerScript>F:\_STM32_PROJECTS\F746\F746-RTC_INTERNAL\STM32F746NGHX_FLASH.ld</LinkerScript>
       <AdditionalOptions />
     </Link>
@@ -81,12 +81,10 @@
   </ImportGroup>
   <ItemGroup>
     <ClInclude Include="..\app\rtc_internal.h" />
-    <ClInclude Include="..\app\uart_stream.h" />
     <ClInclude Include="..\Core\Inc\main.h" />
     <ClInclude Include="..\Core\Inc\stm32f7xx_hal_conf.h" />
     <ClInclude Include="..\Core\Inc\stm32f7xx_it.h" />
     <ClCompile Include="..\app\rtc_internal.cpp" />
-    <ClCompile Include="..\app\uart_stream.c" />
     <ClCompile Include="..\Core\Src\stm32f7xx_hal_msp.c" />
     <ClCompile Include="..\Core\Src\stm32f7xx_it.cpp" />
     <ClCompile Include="..\Core\Src\syscalls.c" />
@@ -177,5 +175,9 @@
     <ClCompile Include="..\Drivers\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_uart_ex.c" />
     <ClInclude Include="..\app\static_string.h" />
     <ClCompile Include="..\Core\Src\main.cpp" />
+    <ClCompile Include="..\app\xprintf\xprintf.c" />
+    <ClInclude Include="..\app\xprintf\xprintf.h" />
+    <ClCompile Include="..\app\xprintf\xuart_stream.cpp" />
+    <ClInclude Include="..\app\xprintf\xuart_stream.h" />
   </ItemGroup>
 </Project>

@@ -9,25 +9,29 @@
 #include <algorithm>
 #include <cstring>
 #include <cstdio>
+#include "xprintf.h"
 
 extern RTC_HandleTypeDef hrtc;
 
-rtc_internal::rtc_internal()
-  : f_reception_time_ms(rx_buf_size * (1 + 8 + 2) * 1000 / f_huart.Init.BaudRate + 2)
+rtc_internal::rtc_internal() = default;
+
+rtc_internal& rtc_internal::get_instance()
 {
+  static rtc_internal instance;
+  return instance;
+}
+
+void rtc_internal::init(UART_HandleTypeDef& huart)
+{
+  f_huart = &huart;
+  f_max_reception_time_ms = rx_buf_size * (1 + 8 + 2) * 1000 / huart.Init.BaudRate + 2;
   start_receive_msg();
 }
 
 void rtc_internal::start_receive_msg()
 {
   f_rx_buf_index = 0;
-  HAL_UART_Receive_IT(&f_huart, &f_rx_buf[f_rx_buf_index], 1);
-}
-
-rtc_internal& rtc_internal::get_instance()
-{
-  static rtc_internal instance;
-  return instance;
+  HAL_UART_Receive_IT(f_huart, &f_rx_buf[f_rx_buf_index], 1);
 }
 
 /**
@@ -44,9 +48,9 @@ void rtc_internal::check_time_out_reception()
   else 
   {
     ++time_out;
-    if (time_out >= f_reception_time_ms) 
+    if (time_out >= f_max_reception_time_ms) 
     {
-      printf("Error: Timeout command!\r");
+      xprintf("Error: Timeout command!\r");
       time_out = 0;
       restart_msg_reception();
     }
@@ -55,53 +59,51 @@ void rtc_internal::check_time_out_reception()
 
 void rtc_internal::restart_msg_reception()
 {
-  HAL_UART_AbortReceive_IT(&f_huart);
+  HAL_UART_AbortReceive_IT(f_huart);
   start_receive_msg();
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
-  rtc_internal::uart_rx_cplt_callback(huart);
+  rtc_internal::get_instance().uart_rx_cplt_callback(huart);
 }
 
 void rtc_internal::uart_rx_cplt_callback(UART_HandleTypeDef* huart)
 {
-  rtc_internal& rtc = get_instance();
-
-  if (huart == &rtc.f_huart)
+  if (huart == f_huart)
   {
-    if (rtc.f_rx_buf[rtc.f_rx_buf_index] != '\r')
+    if (f_rx_buf[f_rx_buf_index] != '\r')
     {
-      ++rtc.f_rx_buf_index;
+      ++f_rx_buf_index;
 
-      if (rtc.f_rx_buf_index >= rx_buf_size)
+      if (f_rx_buf_index >= rx_buf_size)
       {
-        printf("Error: Msg size exceeded!\r");
-        rtc.restart_msg_reception();
+        xprintf("Error: Msg size exceeded!\r");
+        restart_msg_reception();
         return;
       }
     }
     else
     {
-      if (rtc.f_rx_msg[0] != '\0') // If msg hasn't been parsed to this point.
+      if (f_rx_msg[0] != '\0') // If msg hasn't been parsed to this point.
       {
-        execute_cmd(rtc.parse_received_msg()); // Start the parser forced!
+        execute_cmd(parse_received_msg()); // Start the parser forced!
       }
 
-      std::copy_n(reinterpret_cast<char*>(rtc.f_rx_buf), rtc.f_rx_buf_index, rtc.f_rx_msg);
-      rtc.f_rx_msg[rtc.f_rx_buf_index] = '\0';
-      rtc.f_rx_buf_index = 0;
+      std::copy_n(reinterpret_cast<char*>(f_rx_buf), f_rx_buf_index, f_rx_msg);
+      f_rx_msg[f_rx_buf_index] = '\0';
+      f_rx_buf_index = 0;
     }
 
-    HAL_UART_Receive_IT(huart, &rtc.f_rx_buf[rtc.f_rx_buf_index], 1);
+    HAL_UART_Receive_IT(huart, &f_rx_buf[f_rx_buf_index], 1);
   }
 }
 
 /**
   * @brief  This function must be called in the main loop to parse received msg.
   * @note   This function parses msg received by UART into rtc_cmd and time/data str.
-  * @retval The command of rtc_cmd and pointer to string of format hh:mm:ss or dd/mm/yyyy
-  *         with result of time/data (ptr to a location in the f_rx_msg).
+  * @retval The command of rtc_cmd and pointer to string of format @ref time_template
+  *         or @ref data_template with result of time/data (ptr to location in the @ref f_rx_msg).
   */
 rtc_internal::cmd_info rtc_internal::parse_received_msg()
 {
@@ -125,12 +127,12 @@ rtc_internal::cmd_info rtc_internal::parse_received_msg()
       }
       else
       {
-        printf("Error: Wrong command!\r");
+        xprintf("Error: Wrong command!\r");
       }
     }
     else
     {
-      printf("Error: Wrong command!\r");
+      xprintf("Error: Wrong command!\r");
     }
 
     f_rx_msg[0] = '\0';
@@ -159,7 +161,7 @@ void rtc_internal::execute_cmd(const cmd_info& data)
 
 /**
   * @brief  Sets RTC current time.
-  * @param  str : pointer to string of format hh:mm:ss
+  * @param  str : pointer to string of format @ref time_template
   */
 void rtc_internal::set_time(const char* str)
 {
@@ -176,7 +178,7 @@ void rtc_internal::set_time(const char* str)
 
     if (fix_time(time_set, true) != rtc_res::OK)
     {
-      printf("Error: Wrong time! Maybe you mean: %02u:%02u:%02u?\r",
+      xprintf("Error: Wrong time! Maybe you mean: %02u:%02u:%02u?\r",
         time_set.Hours,
         time_set.Minutes,
         time_set.Seconds);
@@ -185,18 +187,18 @@ void rtc_internal::set_time(const char* str)
     if (const auto res = HAL_RTC_SetTime(&hrtc, &time_set, RTC_FORMAT_BIN); 
         res != HAL_OK)
     {
-      printf("Error %u: Failed to set time!\r", res);
+      xprintf("Error %u: Failed to set time!\r", res);
     }
   }
   else 
   {
-    printf("Error: Wrong time format!\r");
+    xprintf("Error: Wrong time format!\r");
   }
 }
 
 /**
   * @brief  Sets RTC current date.
-  * @param  str : pointer to string of format dd/mm/yyyy
+  * @param  str : pointer to string of format @ref data_template
   */
 void rtc_internal::set_date(const char* str)
 {
@@ -213,7 +215,7 @@ void rtc_internal::set_date(const char* str)
 
     if (fix_date(date_set, true) != rtc_res::OK)
     {
-      printf("Error: Wrong date! Maybe you mean: %02u/%02u/%4u?\r",
+      xprintf("Error: Wrong date! Maybe you mean: %02u/%02u/%4u?\r",
         date_set.Date,
         date_set.Month,
         static_cast<unsigned int>(date_set.Year) + 2000);
@@ -222,12 +224,12 @@ void rtc_internal::set_date(const char* str)
     if (const auto res = HAL_RTC_SetDate(&hrtc, &date_set, RTC_FORMAT_BIN); 
         res != HAL_OK)
     {
-      printf("Error %u: Failed to set data!\r", res);
+      xprintf("Error %u: Failed to set data!\r", res);
     }
   }
   else 
   {
-    printf("Error: Wrong data format!\r");
+    xprintf("Error: Wrong data format!\r");
   }
 }
 
@@ -241,17 +243,17 @@ void rtc_internal::print_time()
   if (const auto res = HAL_RTC_GetTime(&hrtc, &time_get, RTC_FORMAT_BIN); 
       res != HAL_OK)
   {
-    printf("Error %u: Failed to read time!\r", res);
+    xprintf("Error %u: Failed to read time!\r", res);
   }
 
   RTC_DateTypeDef date_get;
   if (const auto res = HAL_RTC_GetDate(&hrtc, &date_get, RTC_FORMAT_BIN);
       res != HAL_OK)
   {
-    printf("Error %u: Failed to read date!\r", res);
+    xprintf("Error %u: Failed to read date!\r", res);
   }
 
-  printf("%02u/%02u/%4u %02u:%02u:%02u\r", 
+  xprintf("%02u/%02u/%4u %02u:%02u:%02u\r", 
     date_get.Date, date_get.Month, 2000 + date_get.Year, 
     time_get.Hours, time_get.Minutes, time_get.Seconds);
 }

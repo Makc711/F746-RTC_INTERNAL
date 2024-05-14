@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "uart_stream.h"
+#include "xuart_stream.h"
 #include "rtc_internal.h"
 /* USER CODE END Includes */
 
@@ -106,15 +106,16 @@ int main(void)
   MX_RTC_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  uart_stream_init(&huart1);
-  auto& rtc_instance = rtc_internal::get_instance();
+  xuart_stream::get_instance().init(huart1);
+  auto& rtc = rtc_internal::get_instance();
+  rtc.init(huart1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (true)
   {
-    rtc_internal::execute_cmd(rtc_instance.parse_received_msg());
+    rtc_internal::execute_cmd(rtc.parse_received_msg());
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -354,7 +355,7 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
-  while (1)
+  while (true)
   {
   }
   /* USER CODE END Error_Handler_Debug */

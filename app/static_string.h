@@ -1,6 +1,6 @@
 /*
 Compile-time string manipulation library for modern C++
-version 1.0.2
+version 1.0.3
 https://github.com/snw1/static-string-cpp
 Added functionality by Maxim Rusanov <maxim.rusanof@gmail.com>
 Added:
@@ -12,6 +12,7 @@ Added:
     STOSW()
     to_c_string()
     c_str()
+    max()
 
 Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 SPDX-License-Identifier: MIT
@@ -612,6 +613,27 @@ constexpr size_t c_strlen(const Char* str) {
         ++length;
     }
     return length;
+}
+
+template <typename T, T... Args>
+struct max_helper;
+
+template <typename T, T A>
+struct max_helper<T, A> {
+  static constexpr T value = A;
+};
+
+template <typename T, T A, T... Rest>
+struct max_helper<T, A, Rest...> {
+  static constexpr T temp_max = max_helper<T, Rest...>::value;
+  static constexpr T value = (A > temp_max) ? A : temp_max;
+};
+
+template <auto... Args>
+constexpr auto max()
+{
+  using common_type = std::common_type_t<decltype(Args)...>;
+  return max_helper<common_type, Args...>::value;
 }
 
 } // namespace snw1

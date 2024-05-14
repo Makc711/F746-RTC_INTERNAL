@@ -49,13 +49,32 @@
     <AllDependencies>
       <ProjectDependency>
         <RelativePath>..\.cproject</RelativePath>
-        <Timestamp>133600182259610923</Timestamp>
+        <Timestamp>133601794184815703</Timestamp>
       </ProjectDependency>
     </AllDependencies>
     <RootDirectory>
       <Subdirectories>
         <VirtualDirectorySnapshot>
           <Name>app</Name>
+          <Subdirectories>
+            <VirtualDirectorySnapshot>
+              <Name>xprintf</Name>
+              <Files>
+                <VirtualFileSnapshot>
+                  <RelativePath>..\app\xprintf\xprintf.c</RelativePath>
+                </VirtualFileSnapshot>
+                <VirtualFileSnapshot>
+                  <RelativePath>..\app\xprintf\xprintf.h</RelativePath>
+                </VirtualFileSnapshot>
+                <VirtualFileSnapshot>
+                  <RelativePath>..\app\xprintf\xuart_stream.cpp</RelativePath>
+                </VirtualFileSnapshot>
+                <VirtualFileSnapshot>
+                  <RelativePath>..\app\xprintf\xuart_stream.h</RelativePath>
+                </VirtualFileSnapshot>
+              </Files>
+            </VirtualDirectorySnapshot>
+          </Subdirectories>
           <Files>
             <VirtualFileSnapshot>
               <RelativePath>..\app\rtc_internal.cpp</RelativePath>
@@ -110,7 +129,7 @@
                   <RelativePath>..\Core\Src\stm32f7xx_hal_msp.c</RelativePath>
                 </VirtualFileSnapshot>
                 <VirtualFileSnapshot>
-                  <RelativePath>..\Core\Src\stm32f7xx_it.c</RelativePath>
+                  <RelativePath>..\Core\Src\stm32f7xx_it.cpp</RelativePath>
                 </VirtualFileSnapshot>
                 <VirtualFileSnapshot>
                   <RelativePath>..\Core\Src\syscalls.c</RelativePath>

@@ -118,6 +118,12 @@
     <Filter Include="Header files\app">
       <UniqueIdentifier>{d8d1bff7-f871-436f-9e67-dd3bfb878b74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\app\xprintf">
+      <UniqueIdentifier>{799cc061-6e11-4e03-8d47-c597c14f3702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\app\xprintf">
+      <UniqueIdentifier>{9a8d0797-9a7e-4421-b3db-2ad174163fe3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Core\Inc\main.h">
@@ -404,6 +410,18 @@
     </ClCompile>
     <ClInclude Include="..\app\rtc_internal.h">
       <Filter>Source files\app</Filter>
+    </ClInclude>
+    <ClCompile Include="..\app\xprintf\xprintf.c">
+      <Filter>Source files\app\xprintf</Filter>
+    </ClCompile>
+    <ClInclude Include="..\app\xprintf\xprintf.h">
+      <Filter>Source files\app\xprintf</Filter>
+    </ClInclude>
+    <ClCompile Include="..\app\xprintf\xuart_stream.cpp">
+      <Filter>Source files\app\xprintf</Filter>
+    </ClCompile>
+    <ClInclude Include="..\app\xprintf\xuart_stream.h">
+      <Filter>Source files\app\xprintf</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
