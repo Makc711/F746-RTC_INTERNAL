@@ -32,6 +32,7 @@ void xuart_stream::init(UART_HandleTypeDef& huart)
   f_huart = &huart;
 
 #if XF_USE_OUTPUT
+  f_max_transmission_time_ms = (tx_buf_size * (1 + 8 + 2) * 1000 / huart.Init.BaudRate + 2) * 3;
   f_tx_buf[0] = 0;
   f_tx_buf_idx = 0;
 #endif
@@ -61,16 +62,27 @@ void xuart_stream::output_stream(const char c)
   }
 }
 
+xuart_stream::status xuart_stream::transmit_data(const uint8_t& data, const uint16_t size) const
+{
+  if (HAL_UART_Transmit(f_huart, &data, size, f_max_transmission_time_ms) != HAL_OK)
+  {
+    return status::ERROR;
+  }
+
+  return status::OK;
+}
+
 xuart_stream::status xuart_stream::add_char(const char c)
 {
   f_tx_buf[f_tx_buf_idx++] = c;
 
   if (f_tx_buf_idx >= tx_buf_size)
   {
-    if (HAL_UART_Transmit(f_huart, f_tx_buf, f_tx_buf_idx, 100) != HAL_OK)
+    if (transmit_data(f_tx_buf[0], f_tx_buf_idx) != status::OK)
     {
       return status::ERROR;
     }
+
     f_tx_buf_idx = 0;
   }
 
@@ -87,7 +99,7 @@ xuart_stream::status xuart_stream::add_endl()
   const uint16_t len = f_tx_buf_idx;
   f_tx_buf_idx = 0;
 
-  if (HAL_UART_Transmit(f_huart, f_tx_buf, len, 100) != HAL_OK)
+  if (transmit_data(f_tx_buf[0], len) != status::OK)
   {
     return status::ERROR;
   }

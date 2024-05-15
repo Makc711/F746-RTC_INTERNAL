@@ -43,16 +43,16 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CPPLanguageStandard>CPP1Z</CPPLanguageStandard>
-      <AdditionalIncludeDirectories>..\Core\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc\Legacy;..\Drivers\CMSIS\Device\ST\STM32F7xx\Include;..\Drivers\CMSIS\Include;..\app;..\app\xprintf;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\app\xprintf;..\Core\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc\Legacy;..\Drivers\CMSIS\Device\ST\STM32F7xx\Include;..\Drivers\CMSIS\Include;..\app;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG=1;USE_HAL_DRIVER;STM32F746xx;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions />
       <CLanguageStandard />
       <Optimization>O0</Optimization>
     </ClCompile>
     <Link>
-      <LibrarySearchDirectories>;%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
-      <AdditionalLibraryNames>;%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
-      <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
+      <LibrarySearchDirectories>%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
+      <AdditionalLibraryNames>%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
+      <AdditionalLinkerInputs>%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
       <LinkerScript>F:\_STM32_PROJECTS\F746\F746-RTC_INTERNAL\STM32F746NGHX_FLASH.ld</LinkerScript>
       <AdditionalOptions />
     </Link>
@@ -60,16 +60,16 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CPPLanguageStandard>CPP1Z</CPPLanguageStandard>
-      <AdditionalIncludeDirectories>..\Core\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc\Legacy;..\Drivers\CMSIS\Device\ST\STM32F7xx\Include;..\Drivers\CMSIS\Include;..\app;..\app\xprintf;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\app\xprintf;..\Core\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc;..\Drivers\STM32F7xx_HAL_Driver\Inc\Legacy;..\Drivers\CMSIS\Device\ST\STM32F7xx\Include;..\Drivers\CMSIS\Include;..\app;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG=1;RELEASE=1;USE_HAL_DRIVER;STM32F746xx;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions />
       <CLanguageStandard />
       <Optimization>O3</Optimization>
     </ClCompile>
     <Link>
-      <LibrarySearchDirectories>;%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
-      <AdditionalLibraryNames>;%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
-      <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
+      <LibrarySearchDirectories>%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
+      <AdditionalLibraryNames>%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
+      <AdditionalLinkerInputs>%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
       <LinkerScript>F:\_STM32_PROJECTS\F746\F746-RTC_INTERNAL\STM32F746NGHX_FLASH.ld</LinkerScript>
       <AdditionalOptions />
     </Link>

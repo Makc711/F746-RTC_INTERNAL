@@ -24,7 +24,7 @@ rtc_internal& rtc_internal::get_instance()
 void rtc_internal::init(UART_HandleTypeDef& huart)
 {
   f_huart = &huart;
-  f_max_reception_time_ms = rx_buf_size * (1 + 8 + 2) * 1000 / huart.Init.BaudRate + 2;
+  f_max_reception_time_ms = (rx_buf_size * (1 + 8 + 2) * 1000 / huart.Init.BaudRate + 2) * 3;
   start_receive_msg();
 }
 

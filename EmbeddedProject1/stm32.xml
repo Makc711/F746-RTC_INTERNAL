@@ -49,7 +49,7 @@
     <AllDependencies>
       <ProjectDependency>
         <RelativePath>..\.cproject</RelativePath>
-        <Timestamp>133601794184815703</Timestamp>
+        <Timestamp>133602703621710799</Timestamp>
       </ProjectDependency>
     </AllDependencies>
     <RootDirectory>
@@ -84,12 +84,6 @@
             </VirtualFileSnapshot>
             <VirtualFileSnapshot>
               <RelativePath>..\app\static_string.h</RelativePath>
-            </VirtualFileSnapshot>
-            <VirtualFileSnapshot>
-              <RelativePath>..\app\uart_stream.c</RelativePath>
-            </VirtualFileSnapshot>
-            <VirtualFileSnapshot>
-              <RelativePath>..\app\uart_stream.h</RelativePath>
             </VirtualFileSnapshot>
           </Files>
         </VirtualDirectorySnapshot>

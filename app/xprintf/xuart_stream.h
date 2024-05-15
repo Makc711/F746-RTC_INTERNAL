@@ -42,8 +42,9 @@ private:
   explicit xuart_stream();
 
 #if XF_USE_OUTPUT
-  status add_char(char c);
-  status add_endl();
+  [[nodiscard]] status transmit_data(const uint8_t &data, uint16_t size) const;
+  [[nodiscard]] status add_char(char c);
+  [[nodiscard]] status add_endl();
 #endif
 
 private:
@@ -52,6 +53,7 @@ private:
   UART_HandleTypeDef* f_huart = nullptr;
 
 #if XF_USE_OUTPUT
+  uint32_t f_max_transmission_time_ms = 0;
   uint8_t f_tx_buf[tx_buf_size] = { 0 };
   uint16_t f_tx_buf_idx = 0;
 #endif
