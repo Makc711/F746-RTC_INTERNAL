@@ -28,10 +28,21 @@ void rtc_internal::init(UART_HandleTypeDef& huart)
   start_receive_msg();
 }
 
+void rtc_internal::initiate_reception()
+{
+  HAL_UART_Receive_IT(f_huart, &f_rx_buf[f_rx_buf_index], sizeof(f_rx_buf[0]));
+}
+
 void rtc_internal::start_receive_msg()
 {
   f_rx_buf_index = 0;
-  HAL_UART_Receive_IT(f_huart, &f_rx_buf[f_rx_buf_index], 1);
+  initiate_reception();
+}
+
+void rtc_internal::restart_msg_reception()
+{
+  HAL_UART_AbortReceive_IT(f_huart);
+  start_receive_msg();
 }
 
 /**
@@ -57,46 +68,45 @@ void rtc_internal::check_time_out_reception()
   }
 }
 
-void rtc_internal::restart_msg_reception()
-{
-  HAL_UART_AbortReceive_IT(f_huart);
-  start_receive_msg();
-}
-
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
   rtc_internal::get_instance().uart_rx_cplt_callback(huart);
 }
 
-void rtc_internal::uart_rx_cplt_callback(UART_HandleTypeDef* huart)
+void rtc_internal::uart_rx_cplt_callback(const UART_HandleTypeDef* huart)
 {
   if (huart == f_huart)
   {
-    if (f_rx_buf[f_rx_buf_index] != '\r')
-    {
-      ++f_rx_buf_index;
-
-      if (f_rx_buf_index >= rx_buf_size)
-      {
-        xprintf("Error: Msg size exceeded!\r");
-        restart_msg_reception();
-        return;
-      }
-    }
-    else
-    {
-      if (f_rx_msg[0] != '\0') // If msg hasn't been parsed to this point.
-      {
-        execute_cmd(parse_received_msg()); // Start the parser forced!
-      }
-
-      std::copy_n(reinterpret_cast<char*>(f_rx_buf), f_rx_buf_index, f_rx_msg);
-      f_rx_msg[f_rx_buf_index] = '\0';
-      f_rx_buf_index = 0;
-    }
-
-    HAL_UART_Receive_IT(huart, &f_rx_buf[f_rx_buf_index], 1);
+    forming_rx_msg();
   }
+}
+
+void rtc_internal::forming_rx_msg()
+{
+  if (f_rx_buf[f_rx_buf_index] != '\r')
+  {
+    ++f_rx_buf_index;
+
+    if (f_rx_buf_index >= rx_buf_size)
+    {
+      xprintf("Error: Msg size exceeded!\r");
+      restart_msg_reception();
+      return;
+    }
+  }
+  else
+  {
+    if (f_rx_msg[0] != '\0') // If msg hasn't been parsed to this point.
+    {
+      execute_cmd(parse_received_msg()); // Start the parser forced!
+    }
+
+    std::copy_n(reinterpret_cast<char*>(f_rx_buf), f_rx_buf_index, f_rx_msg);
+    f_rx_msg[f_rx_buf_index] = '\0';
+    f_rx_buf_index = 0;
+  }
+
+  initiate_reception();
 }
 
 /**
