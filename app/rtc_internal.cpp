@@ -30,7 +30,7 @@ void rtc_internal::init(UART_HandleTypeDef& huart)
 
 void rtc_internal::initiate_reception()
 {
-  HAL_UART_Receive_IT(f_huart, &f_rx_buf[f_rx_buf_index], sizeof(f_rx_buf[0]));
+  HAL_UART_Receive_IT(f_huart, const_cast<uint8_t*>(&f_rx_buf[f_rx_buf_index]), sizeof(f_rx_buf[0]));
 }
 
 void rtc_internal::start_receive_msg()
@@ -85,7 +85,7 @@ void rtc_internal::forming_rx_msg()
 {
   if (f_rx_buf[f_rx_buf_index] != '\r')
   {
-    ++f_rx_buf_index;
+    f_rx_buf_index = f_rx_buf_index + 1;
 
     if (f_rx_buf_index >= rx_buf_size)
     {
@@ -101,7 +101,7 @@ void rtc_internal::forming_rx_msg()
       execute_cmd(parse_received_msg()); // Start the parser forced!
     }
 
-    std::copy_n(reinterpret_cast<char*>(f_rx_buf), f_rx_buf_index, f_rx_msg);
+    std::copy_n(f_rx_buf, f_rx_buf_index, f_rx_msg);
     f_rx_msg[f_rx_buf_index] = '\0';
     f_rx_buf_index = 0;
   }
@@ -121,15 +121,15 @@ rtc_internal::cmd_info rtc_internal::parse_received_msg()
 
   if (f_rx_msg[0] != '\0')
   {
-    if (std::strncmp(f_rx_msg, cmd_set_t.c_str(), cmd_set_t.length()) == 0)
+    if (std::strncmp(const_cast<const char*>(f_rx_msg), cmd_set_t.c_str(), cmd_set_t.length()) == 0)
     {
-      result = { rtc_cmd::SET_T, f_rx_msg + cmd_set_t.length() };
+      result = { rtc_cmd::SET_T, const_cast<const char*>(f_rx_msg) + cmd_set_d.length() };
     }
-    else if (std::strncmp(f_rx_msg, cmd_set_d.c_str(), cmd_set_d.length()) == 0)
+    else if (std::strncmp(const_cast<const char*>(f_rx_msg), cmd_set_d.c_str(), cmd_set_d.length()) == 0)
     {
-      result = { rtc_cmd::SET_D, f_rx_msg + cmd_set_d.length() };
+      result = { rtc_cmd::SET_D, const_cast<const char*>(f_rx_msg) + cmd_set_d.length() };
     }
-    else if (std::strncmp(f_rx_msg, cmd_get.c_str(), cmd_get.length()) == 0)
+    else if (std::strncmp(const_cast<const char*>(f_rx_msg), cmd_get.c_str(), cmd_get.length()) == 0)
     {
       if (f_rx_msg[cmd_get.length()] == '\0')
       {

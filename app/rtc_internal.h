@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file           : rtc_internal.h
   * @author         : Rusanov M.N.
-  * @version        : V1.0.3
-  * @date           : 15-May-2024
+  * @version        : V1.0.4
+  * @date           : 16-May-2024
   * @brief          : Header for rtc_internal.cpp file.
   *                   This file contains functions for working with RTC STM32
   *                   using UART.
@@ -70,7 +70,7 @@ private:
                                                   cmd_get.length()>() + 1;
   UART_HandleTypeDef* f_huart = nullptr;
   uint32_t f_max_reception_time_ms = 0;
-  uint8_t f_rx_buf[rx_buf_size] = { '\0' };
-  size_t f_rx_buf_index = 0;
-  char f_rx_msg[rx_buf_size] = { '\0' };
+  volatile uint8_t f_rx_buf[rx_buf_size] = { '\0' };
+  volatile size_t f_rx_buf_index = 0;
+  volatile char f_rx_msg[rx_buf_size] = { '\0' };
 };
